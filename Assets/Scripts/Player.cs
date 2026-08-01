@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     
     //this is to keep track of currently active coyoteTimes;
     private Coroutine _coyoteTime;
+    private Coroutine _jumpBuffer;
     private bool _hasJumped;
     
     
@@ -22,6 +23,8 @@ public class Player : MonoBehaviour
 
     [Tooltip("Amount of time that a jump input can be received after leaving solid ground")]
     public float coyoteTime;
+
+    public float jumpBuffer;
     
     public float walkingSpeed;
     public float jumpSpeed;
@@ -34,6 +37,7 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _coyoteTime = null;
         _hasJumped = true;
+        _jumpBuffer = null;
     }
 
     // Update is called once per frame
@@ -52,26 +56,40 @@ public class Player : MonoBehaviour
         {
             _t.position += walkingSpeed * Time.deltaTime * Vector3.right;
         }
-        
-        
-        if (_k.spaceKey.wasPressedThisFrame && 
-            !_hasJumped &&
-            (
-                _state == playerState.grounded ||
-                _coyoteTime != null
-                )
-            )
+
+
+        if (_k.spaceKey.wasPressedThisFrame)
         {
-            //with some other condition, permit the jump
-            _rb.linearVelocity = new Vector2(0,jumpSpeed);
-            _hasJumped = true;
+            if(!_hasJumped &&
+               (
+                   _state == playerState.grounded ||
+                   _coyoteTime != null
+               )
+              )
+            {
+                //with some other condition, permit the jump
+                Jump();
+            }
+            else
+            {
+                print("not jumping?");
+                _jumpBuffer = StartCoroutine(JumpBuffer());
+            }
         }
+            
+        
 
         //ensure terminal velocity
         if (_rb.linearVelocity.y < -maxFallingSpeed)
         {
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, -maxFallingSpeed);
         }
+    }
+
+    void Jump()
+    {
+        _rb.linearVelocity = new Vector2(0,jumpSpeed);
+        _hasJumped = true;
     }
     
     void OnCollisionEnter2D(Collision2D collision){
@@ -80,6 +98,12 @@ public class Player : MonoBehaviour
             _state = playerState.grounded;
             _hasJumped = false;
             CeaseIfActive(ref _coyoteTime);
+            
+            if (_jumpBuffer != null)
+            {
+                Jump();
+                CeaseIfActive(ref _jumpBuffer);
+            }
         }
     }
 
@@ -108,6 +132,12 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(coyoteTime);
         _coyoteTime = null;
+    }
+
+    IEnumerator JumpBuffer()
+    {
+        yield return new WaitForSeconds(jumpBuffer);
+        _jumpBuffer = null;
     }
 
 
