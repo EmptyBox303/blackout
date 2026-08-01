@@ -66,9 +66,12 @@ public class Player : MonoBehaviour
             _rb.linearVelocity = new Vector2(0,jumpSpeed);
             _hasJumped = true;
         }
-        
-        
-        
+
+        //ensure terminal velocity
+        if (_rb.linearVelocity.y < -maxFallingSpeed)
+        {
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, -maxFallingSpeed);
+        }
     }
     
     void OnCollisionEnter2D(Collision2D collision){
@@ -82,7 +85,6 @@ public class Player : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        
         if (collision.gameObject.CompareTag("Ground"))
         {
             _state = playerState.airborne;
