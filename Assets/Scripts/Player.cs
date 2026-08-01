@@ -1,11 +1,15 @@
 using UnityEngine;
 
-public class PlayerScript1 : MonoBehaviour
+public class Player : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    //terminal velocity downwards
+    public float maxFallingSpeed;
+    
+    
+    
     void Start()
     {
-        
+        //this is a comment
     }
 
     // Update is called once per frame
@@ -13,7 +17,7 @@ public class PlayerScript1 : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            //move left at a rate of 0.3 units per 1/60th of a second
+            
         }
         
         // if press right:
