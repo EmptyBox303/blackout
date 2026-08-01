@@ -10,3 +10,5 @@
 /[Mm]emoryCaptures/
 
 /[Rr]ecordings/
+
+*.csproj
