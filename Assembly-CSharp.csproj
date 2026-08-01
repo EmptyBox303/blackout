@@ -938,11 +938,11 @@
     <Reference Include="Unity.Rendering.LightTransport.Editor">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.Rendering.LightTransport.Editor.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.AI.Navigation">
-      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Services.Core">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.Services.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.AI.Navigation">
+      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.AI.Navigation.dll</HintPath>
     </Reference>
     <Reference Include="Unity.RenderPipelines.Core.ShaderLibrary">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.RenderPipelines.Core.ShaderLibrary.dll</HintPath>
@@ -1088,14 +1088,17 @@
     <Reference Include="Unity.2D.Tilemap.Editor">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.2D.Tilemap.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.SurfaceCache.Runtime">
+      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.SurfaceCache.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.2D.Common.Runtime">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.2D.Common.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Collections">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.Collections.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.SurfaceCache.Runtime">
-      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.SurfaceCache.Runtime.dll</HintPath>
+    <Reference Include="Unity.RenderPipelines.GPUDriven.Runtime">
+      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.XR.LegacyInputHelpers">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\UnityEditor.XR.LegacyInputHelpers.dll</HintPath>
@@ -1105,9 +1108,6 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.State.Editor">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.VisualScripting.State.Editor.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.RenderPipelines.GPUDriven.Runtime">
-      <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.RenderPipelines.GPUDriven.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Mathematics">
       <HintPath>C:\Users\jason\blackout\Library\ScriptAssemblies\Unity.Mathematics.dll</HintPath>
