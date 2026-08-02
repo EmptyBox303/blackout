@@ -1,68 +1,121 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
-    
+
+    public static Player p;
     //some private variables for convenience
     private Transform _t;
     private Rigidbody2D _rb;
     private Keyboard _k;
-    private playerState _state;
+    private Dictionary<KeyControl, bool> _inputStates;
     
     //this is to keep track of currently active coyoteTimes;
     private Coroutine _coyoteTime;
     private Coroutine _jumpBuffer;
+    private Coroutine _jumpHold;
+    
     private bool _hasJumped;
-    
-    
+
+    [FormerlySerializedAs("_state")] public PlayerState state;
+    public GameObject contactind;
     //terminal velocity downwards
     [Tooltip("terminal velocity")]
     public float maxFallingSpeed;
 
-    [Tooltip("Amount of time that a jump input can be received after leaving solid ground")]
+    [Tooltip("buffers")]
     public float coyoteTime;
-
     public float jumpBuffer;
+    public float jumpExtendTime;
     
+    
+    [Tooltip("speed")]
     public float walkingSpeed;
     public float jumpSpeed;
+    
+    [Tooltip("gravity")]
+    public float normalGravity;
+    public float holdGravity;
+
+    
+    [Tooltip("acceleration")]
+    public float airborneAccTime;
+    public float groundedAccTime;
+    [Tooltip("decceleration")] 
+    //essentially, how long it takes for the player to naturally deccelerate from full speed
+    public float airborneDecTime;
+    public float groundedDecTime;
     
     
     void Start()
     {
         _t = transform;
+        p = this;
         _k = Keyboard.current;
         _rb = GetComponent<Rigidbody2D>();
+        _rb.gravityScale = normalGravity;
         _coyoteTime = null;
         _hasJumped = true;
         _jumpBuffer = null;
+        _jumpHold = null;
+        _inputStates = new Dictionary<KeyControl, bool>();
+
+        _inputStates[_k.aKey] = false;
+        _inputStates[_k.dKey] = false;
+        _inputStates[_k.spaceKey] = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Input.GetKey is not really working in Unity's new input system
+        //restructure so that updates only collect inputs
+        _inputStates[_k.aKey] = _k.aKey.isPressed;
+        _inputStates[_k.dKey] = _k.dKey.isPressed;
+        _inputStates[_k.spaceKey] = _k.spaceKey.isPressed;
         
-        //go left when press left
-        if (_k.aKey.isPressed)
+    }
+
+    void FixedUpdate()
+    {
+        int lateralMovement = 0;
+        if (_inputStates[_k.aKey]) lateralMovement = -1;
+        if (_inputStates[_k.dKey]) lateralMovement += 1;
+        
+        float xSpeed = _rb.linearVelocity.x;
+
+        if (lateralMovement == 0)
         {
-            _t.position += walkingSpeed * Time.deltaTime * Vector3.left;
-        }
+            //the goal is to decelerate in specified amount of time
+            //with each FixedUpdate(dt) and goal time for full speed T, 
+            float fullSpeedDecTime = (state == PlayerState.grounded) ? groundedDecTime : airborneDecTime;
+            float decceleratedSpeed = xSpeed - Math.Sign(xSpeed) * walkingSpeed * (Time.fixedDeltaTime/fullSpeedDecTime);
 
-        //go right when press right
-        if (_k.dKey.isPressed)
+            xSpeed = (Math.Sign(decceleratedSpeed) != Math.Sign(xSpeed)) ? 
+                0 : decceleratedSpeed;
+        }
+        else
         {
-            _t.position += walkingSpeed * Time.deltaTime * Vector3.right;
+            
+            float fullSpeedAccTime =  (state == PlayerState.grounded) ? groundedAccTime : airborneAccTime;
+            float acceleratedSpeed = xSpeed + lateralMovement * walkingSpeed * (Time.fixedDeltaTime / fullSpeedAccTime);
+            //print(acceleratedSpeed);
+            xSpeed = Math.Clamp(acceleratedSpeed, -walkingSpeed, walkingSpeed);
         }
+        
+        _rb.linearVelocity = new Vector2(xSpeed,_rb.linearVelocityY);
+        
 
-
-        if (_k.spaceKey.wasPressedThisFrame)
+        if (_inputStates[_k.spaceKey])
         {
             if(!_hasJumped &&
                (
-                   _state == playerState.grounded ||
+                   state == PlayerState.grounded ||
                    _coyoteTime != null
                )
               )
@@ -72,30 +125,31 @@ public class Player : MonoBehaviour
             }
             else
             {
-                print("not jumping?");
                 _jumpBuffer = StartCoroutine(JumpBuffer());
             }
         }
-            
-        
-
-        //ensure terminal velocity
         if (_rb.linearVelocity.y < -maxFallingSpeed)
         {
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, -maxFallingSpeed);
         }
+
+        _rb.gravityScale = (_jumpHold != null) ? holdGravity : normalGravity;
+        
     }
 
     void Jump()
     {
-        _rb.linearVelocity = new Vector2(0,jumpSpeed);
+        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x,jumpSpeed);
         _hasJumped = true;
+        _jumpHold = StartCoroutine(HoldJump());
     }
     
     void OnCollisionEnter2D(Collision2D collision){
+        print(_rb.linearVelocity);
+        
         if (collision.gameObject.CompareTag("Ground"))
         {
-            _state = playerState.grounded;
+            state = PlayerState.grounded;
             _hasJumped = false;
             CeaseIfActive(ref _coyoteTime);
             
@@ -109,12 +163,20 @@ public class Player : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D collision)
     {
+        print(_rb.linearVelocity);
         if (collision.gameObject.CompareTag("Ground"))
         {
-            _state = playerState.airborne;
+            state = PlayerState.airborne;
             CeaseIfActive(ref _coyoteTime);
             _coyoteTime = StartCoroutine(CoyoteTime());
         }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        contactind.transform.position = collision.contacts[0].point;
+        if(_rb.linearVelocity.magnitude != 0)
+            print(_rb.linearVelocity);
     }
 
     void CeaseIfActive(ref Coroutine c)
@@ -142,12 +204,21 @@ public class Player : MonoBehaviour
 
     IEnumerator HoldJump()
     {
-        float t = 0;
-        yield return null;
+        for (float t = 0; t < jumpExtendTime; t += Time.fixedDeltaTime)
+        {
+            if (!_k.spaceKey.isPressed) break;
+            yield return new WaitForFixedUpdate();
+        }
+        _jumpHold = null;
+    }
+
+    public void Death()
+    {
+        
     }
 
 
-    enum playerState
+    public enum PlayerState
     {
         grounded,
         airborne,
