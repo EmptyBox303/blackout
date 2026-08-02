@@ -147,7 +147,8 @@ public class Player : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision){
         print(_rb.linearVelocity);
         
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Ground") &&
+            collision.contacts[0].normal.x == 0)
         {
             state = PlayerState.grounded;
             _hasJumped = false;
@@ -175,8 +176,11 @@ public class Player : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         contactind.transform.position = collision.contacts[0].point;
-        if(_rb.linearVelocity.magnitude != 0)
-            print(_rb.linearVelocity);
+        if (_rb.linearVelocity.magnitude != 0)
+        {
+            
+        }
+            
     }
 
     void CeaseIfActive(ref Coroutine c)
