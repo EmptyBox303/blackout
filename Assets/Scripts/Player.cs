@@ -140,6 +140,12 @@ public class Player : MonoBehaviour
         _jumpBuffer = null;
     }
 
+    IEnumerator HoldJump()
+    {
+        float t = 0;
+        yield return null;
+    }
+
 
     enum playerState
     {
