@@ -51,9 +51,12 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Data\BCLExtensions\TargetingPacks\netstandard2.1\analyzers\dotnet\roslyn4.0\cs\System.Text.Json.SourceGeneration.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\AreaTransition.cs" />
     <Compile Include="Assets\Scripts\InputSwitch.cs" />
+    <Compile Include="Assets\Scripts\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\Switch.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
+    <Compile Include="Assets\Scripts\Area.cs" />
     <None Include="Assets\Resources\BillingMode.json" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.5.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>

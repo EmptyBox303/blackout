@@ -69,7 +69,7 @@ public class Switch : MonoBehaviour
                 {
                     if (s.IsActive()) count++;
                 }
-                activationState = count;
+                SetActivation(count);
                 break;
             case SwitchType.total:
                 int total = 0;
@@ -77,25 +77,25 @@ public class Switch : MonoBehaviour
                 {
                     total += s.ActivationNumber();
                 }
-                activationState = total;
+                SetActivation(total);
                 break;
             case SwitchType.subtract:
-                activationState = targets[0].ActivationNumber() - targets[1].ActivationNumber();
+                SetActivation(targets[0].ActivationNumber() - targets[1].ActivationNumber());
                 break;
             
             case SwitchType.max:
-                activationState = targets[0].ActivationNumber();
-                active = (activationState <= constraint);
+                SetActivation(targets[0].ActivationNumber());
+                SetActive(activationState <= constraint);
                 break;
             
             case SwitchType.min:
-                activationState = targets[0].ActivationNumber();
-                active = (activationState >= constraint);
+                SetActivation(targets[0].ActivationNumber());
+                SetActive(activationState >= constraint);
                 break;
             
             case SwitchType.equals:
-                activationState = targets[0].ActivationNumber();
-                active = (activationState == constraint);
+                SetActivation(targets[0].ActivationNumber());
+                SetActive(activationState == constraint);
                 break;
                 
         }
