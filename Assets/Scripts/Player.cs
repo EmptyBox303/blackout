@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     private Collider2D _coll;
     private Keyboard _k;
     private Dictionary<KeyControl, bool> _inputStates;
+    private SpriteRenderer _sr;
     
     //this is to keep track of currently active coyoteTimes;
     private Coroutine _coyoteTime;
@@ -101,6 +102,7 @@ public class Player : MonoBehaviour
         _jumpActive = null;
         _inputStates = new Dictionary<KeyControl, bool>();
         dashParticles.Stop();
+        _sr = GetComponent<SpriteRenderer>();
 
         _faceDirection = new Vector2(1, 0);
         _recentFaceRight = true;
@@ -198,7 +200,11 @@ public class Player : MonoBehaviour
         }
         
         _rb.linearVelocity = new Vector2(xSpeed,_rb.linearVelocityY);
-        
+
+        if (_groundContact.Count > 0)
+        {
+            state = PlayerState.grounded;
+        }
 
         if (_inputStates[_k.spaceKey])
         {
@@ -267,6 +273,8 @@ public class Player : MonoBehaviour
         _rb.linearVelocity = dashSpeed * _faceDirection;
         _rb.gravityScale = 0;
         dashParticles.Play();
+        _sr.color = Color.black;
+        
         state = PlayerState.phasing;
         yield return new WaitForSeconds(dashDuration);
         _rb.linearVelocity = Vector2.zero;
@@ -274,6 +282,9 @@ public class Player : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Default");
         _rb.gravityScale = normalGravity;
         dashParticles.Stop();
+        _sr.color = Color.white;
+        state = PlayerState.airborne;
+        
         _dashActive = null;
     }
     
@@ -393,6 +404,7 @@ public class Player : MonoBehaviour
         Time.timeScale = 0;
         CeaseIfActive(ref _dashActive);
         dashParticles.Stop();
+        _sr.color = Color.white;
         gameObject.layer = LayerMask.NameToLayer("Default");
         _hasDashed = false;
         yield return new WaitForSecondsRealtime(transitionTime);
