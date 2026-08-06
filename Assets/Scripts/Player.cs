@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
         _inputStates[_k.sKey] = _k.sKey.isPressed;
         _inputStates[_k.spaceKey] = _k.spaceKey.isPressed;
 
-        if (_k.rightShiftKey.wasPressedThisFrame && _dashActive == null)
+        if (_k.rightShiftKey.wasPressedThisFrame && _dashActive == null && !_hasDashed)
         {
             PhaseDash();
         }
@@ -238,6 +238,7 @@ public class Player : MonoBehaviour
 
     IEnumerator Dash()
     {
+        _hasDashed = true;
         gameObject.layer = LayerMask.NameToLayer("Dash");
         _rb.linearVelocity = dashSpeed * _faceDirection;
         _rb.gravityScale = 0;
@@ -255,10 +256,11 @@ public class Player : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision){
         
         if (collision.gameObject.CompareTag("Ground") &&
-            collision.contacts[0].normal.x == 0)
+            collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
             _hasJumped = false;
+            _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
             
             if (_jumpBuffer != null)
@@ -271,7 +273,6 @@ public class Player : MonoBehaviour
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        print(_rb.linearVelocity);
         if (collision.gameObject.CompareTag("Ground"))
         {
             state = PlayerState.airborne;
@@ -287,6 +288,7 @@ public class Player : MonoBehaviour
         {
             state = PlayerState.grounded;
             _hasJumped = false;
+            _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
         }
             
