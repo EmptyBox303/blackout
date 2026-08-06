@@ -544,6 +544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f761bebe80d564829a8dbb4f17c1116e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  _groundContact: []
   _faceDirection: {x: 0, y: 0}
   state: 0
   contactind: {fileID: 1735525981}
@@ -650,7 +651,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.30588236, g: 0.30588236, b: 0.30588236, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6334,13 +6335,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f761bebe80d564829a8dbb4f17c1116e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  _groundContact: []
   _faceDirection: {x: 0, y: 0}
   state: 0
   contactind: {fileID: 1735525981}
   maxFallingSpeed: 25
   maxLateralSpeed: 25
   maxUpSpeed: 20
-  coyoteTime: 0.02
+  coyoteTime: 0
   jumpBuffer: 0.1
   jumpExtendTime: 0.2
   walkingSpeed: 12.5

@@ -21,9 +21,11 @@ public class Player : MonoBehaviour
     private Coroutine _coyoteTime;
     private Coroutine _jumpBuffer;
     private Coroutine _jumpHold;
+    private Coroutine _jumpActive;
     private Coroutine _dashActive;
+
+    public List<GameObject> _groundContact;
     
-    private bool _hasJumped;
     private bool _hasDashed;
     public Vector2 _faceDirection;
     private bool _recentFaceRight;
@@ -88,11 +90,11 @@ public class Player : MonoBehaviour
         _coll = GetComponent<Collider2D>();
         _rb.gravityScale = normalGravity;
         _coyoteTime = null;
-        _hasJumped = true;
         _hasDashed = true;
         _jumpBuffer = null;
         _jumpHold = null;
         _dashActive = null;
+        _jumpActive = null;
         _inputStates = new Dictionary<KeyControl, bool>();
         dashParticles.Stop();
 
@@ -104,6 +106,7 @@ public class Player : MonoBehaviour
         _inputStates[_k.wKey] = false;
         _inputStates[_k.sKey] = false;
         _inputStates[_k.spaceKey] = false;
+        _groundContact = new List<GameObject>();
         
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer("Dash"), true);
     }
@@ -184,14 +187,14 @@ public class Player : MonoBehaviour
 
         if (_inputStates[_k.spaceKey])
         {
-            if(!_hasJumped &&
+            if( _groundContact.Count > 0 &&
+                _jumpActive == null && 
                (
                    state == PlayerState.grounded ||
                    _coyoteTime != null
                )
               )
             {
-                //with some other condition, permit the jump
                 Jump();
             }
             else
@@ -221,10 +224,15 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        print("Jumped");
+        _jumpActive = StartCoroutine(JumpActive());
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x,jumpSpeed);
-        _hasJumped = true;
         _jumpHold = StartCoroutine(HoldJump());
+    }
+
+    IEnumerator JumpActive()
+    {
+        yield return new WaitForSeconds(0.1f);
+        _jumpActive = null;
     }
 
     void PhaseDash()
@@ -260,12 +268,13 @@ public class Player : MonoBehaviour
             collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
-            _hasJumped = false;
+            _groundContact.Add(collision.gameObject);
             _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
             
             if (_jumpBuffer != null)
             {
+                print("jump buffer");
                 Jump();
                 CeaseIfActive(ref _jumpBuffer);
             }
@@ -276,24 +285,34 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            state = PlayerState.airborne;
-            CeaseIfActive(ref _coyoteTime);
-            _coyoteTime = StartCoroutine(CoyoteTime());
+            if (_groundContact.Contains(collision.gameObject))
+            {
+                _groundContact.Remove(collision.gameObject);
+                
+            }
+
+            if (_groundContact.Count == 0)
+            {
+                state = PlayerState.airborne;
+                CeaseIfActive(ref _coyoteTime);
+                _coyoteTime = StartCoroutine(CoyoteTime());
+            }
+            
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    /*private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground") &&
              collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
-            _hasJumped = false;
+            SetJump(false);
             _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
         }
             
-    }
+    }*/
 
     void CeaseIfActive(ref Coroutine c)
     {
@@ -304,8 +323,17 @@ public class Player : MonoBehaviour
         }
     }
 
+
+
     //coyote timer
     //build in delay
+    //can't have explicit bias toward _hasJumped = false or = true
+    //for example, On---Enter triggers before On---Exit, meaning exitting 1 collider will make priority over entering touch of one
+    //what if...
+    //at all times Player keeps track of a GameObject that has "groundContact"
+    //No need for OnCollisionStay, just OnCollisionEnter
+    //each valid ground Enter(correct y value, contact normal non-horizontal, etc) updates groundContact
+    //each groundExit sets groudnContact to null IF they are the same GameObject
     IEnumerator CoyoteTime()
     {
         yield return new WaitForSeconds(coyoteTime);
