@@ -1,49 +1,58 @@
 fileFormatVersion: 2
-guid: 605747068216d4791bc34e2167fbfae7
+guid: 11f1bdb8ff7604f4d8f2205f7722cb54
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -516048369783106122
-    second: He walkin_0
+      213: 7985425211761020601
+    second: Vampire moves_0
   - first:
-      213: -4487628275740896029
-    second: He walkin_1
+      213: -6065096928430172653
+    second: Vampire moves_1
   - first:
-      213: -5971687734691735114
-    second: He walkin_2
+      213: -5387625337721679734
+    second: Vampire moves_2
   - first:
-      213: -3816405142905190952
-    second: He walkin_3
+      213: 6517174142292102302
+    second: Vampire moves_3
   - first:
-      213: 8183691267489580589
-    second: He walkin_4
+      213: -3901955579750926800
+    second: Vampire moves_4
   - first:
-      213: -8600874170551483169
-    second: He walkin_5
+      213: -1907618870552682933
+    second: Vampire moves_5
   - first:
-      213: -4962243946623491979
-    second: He walkin_6
+      213: -8055285090832999928
+    second: Vampire moves_6
   - first:
-      213: 6622483296963851597
-    second: He walkin_7
+      213: 5725756467290872931
+    second: Vampire moves_7
   - first:
-      213: 2532947655258813938
-    second: He walkin_8
+      213: 3491964880700632367
+    second: Vampire moves_8
   - first:
-      213: -7453816934209227432
-    second: He walkin_9
+      213: -5782664539527184362
+    second: Vampire moves_9
   - first:
-      213: 6458152282575946998
-    second: He walkin_10
+      213: 7585374367815020408
+    second: Vampire moves_10
   - first:
-      213: 407556009519374269
-    second: He walkin_11
+      213: -8673518190965123945
+    second: Vampire moves_11
   - first:
-      213: 325166157578993346
-    second: He walkin_12
+      213: 357106856677376517
+    second: Vampire moves_12
   - first:
-      213: -4635824320675247442
-    second: He walkin_13
+      213: 6654891130784773575
+    second: Vampire moves_13
+  - first:
+      213: -1507591485784139741
+    second: Vampire moves_14
+  - first:
+      213: -2840717158415222151
+    second: Vampire moves_15
+  - first:
+      213: -6184784210777481623
+    second: Vampire moves_16
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -152,7 +161,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: He walkin_0
+      name: Vampire moves_0
       rect:
         serializedVersion: 2
         x: 1
@@ -167,14 +176,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6b59828edb0a6d8f0800000000000000
-      internalID: -516048369783106122
+      spriteID: 9bec677ebede1de60800000000000000
+      internalID: 7985425211761020601
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_1
+      name: Vampire moves_1
       rect:
         serializedVersion: 2
         x: 16
@@ -189,14 +198,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3e417741cddb8b1c0800000000000000
-      internalID: -4487628275740896029
+      spriteID: 3165b945a7274dba0800000000000000
+      internalID: -6065096928430172653
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_2
+      name: Vampire moves_2
       rect:
         serializedVersion: 2
         x: 33
@@ -211,14 +220,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6b9542805ad402da0800000000000000
-      internalID: -5971687734691735114
+      spriteID: a80943adc4f4b35b0800000000000000
+      internalID: -5387625337721679734
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_3
+      name: Vampire moves_3
       rect:
         serializedVersion: 2
         x: 49
@@ -233,14 +242,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8d589222eb7690bc0800000000000000
-      internalID: -3816405142905190952
+      spriteID: e9c8eaa5a57a17a50800000000000000
+      internalID: 6517174142292102302
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_4
+      name: Vampire moves_4
       rect:
         serializedVersion: 2
         x: 67
@@ -255,14 +264,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d26ce2649df429170800000000000000
-      internalID: 8183691267489580589
+      spriteID: 036b79bd21879d9c0800000000000000
+      internalID: -3901955579750926800
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_5
+      name: Vampire moves_5
       rect:
         serializedVersion: 2
         x: 82
@@ -277,14 +286,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fd44272e28e83a880800000000000000
-      internalID: -8600874170551483169
+      spriteID: b4e10e58eb6c685e0800000000000000
+      internalID: -1907618870552682933
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_6
+      name: Vampire moves_6
       rect:
         serializedVersion: 2
         x: 96
@@ -299,14 +308,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 570aca0fb61922bb0800000000000000
-      internalID: -4962243946623491979
+      spriteID: 80a166c73e0e53090800000000000000
+      internalID: -8055285090832999928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_7
+      name: Vampire moves_7
       rect:
         serializedVersion: 2
         x: 112
@@ -321,14 +330,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d45fc7e9879c7eb50800000000000000
-      internalID: 6622483296963851597
+      spriteID: 36c944fab29f57f40800000000000000
+      internalID: 5725756467290872931
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_8
+      name: Vampire moves_8
       rect:
         serializedVersion: 2
         x: 131
@@ -343,14 +352,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f53c5ae876d62320800000000000000
-      internalID: 2532947655258813938
+      spriteID: f2dec4ace83f57030800000000000000
+      internalID: 3491964880700632367
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_9
+      name: Vampire moves_9
       rect:
         serializedVersion: 2
         x: 145
@@ -365,14 +374,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 855faa78df8be8890800000000000000
-      internalID: -7453816934209227432
+      spriteID: 6100c3a3d39dfbfa0800000000000000
+      internalID: -5782664539527184362
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_10
+      name: Vampire moves_10
       rect:
         serializedVersion: 2
         x: 160
@@ -387,14 +396,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6f44154c847ff9950800000000000000
-      internalID: 6458152282575946998
+      spriteID: 87fa7f96cc9a44960800000000000000
+      internalID: 7585374367815020408
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_11
+      name: Vampire moves_11
       rect:
         serializedVersion: 2
         x: 175
@@ -409,14 +418,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dbf5a75080ee7a500800000000000000
-      internalID: 407556009519374269
+      spriteID: 79492aad82971a780800000000000000
+      internalID: -8673518190965123945
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_12
+      name: Vampire moves_12
       rect:
         serializedVersion: 2
         x: 193
@@ -431,14 +440,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2ce7973c5e8338400800000000000000
-      internalID: 325166157578993346
+      spriteID: 5028c1b4bc2b4f400800000000000000
+      internalID: 357106856677376517
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: He walkin_13
+      name: Vampire moves_13
       rect:
         serializedVersion: 2
         x: 211
@@ -453,8 +462,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eaa090d875e3aafb0800000000000000
-      internalID: -4635824320675247442
+      spriteID: 7c5f25d693cea5c50800000000000000
+      internalID: 6654891130784773575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampire moves_14
+      rect:
+        serializedVersion: 2
+        x: 226
+        y: 0
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 328de6ff785f31be0800000000000000
+      internalID: -1507591485784139741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampire moves_15
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 0
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97abd419bceb398d0800000000000000
+      internalID: -2840717158415222151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Vampire moves_16
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 0
+        width: 15
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96ed928578b3b2aa0800000000000000
+      internalID: -6184784210777481623
       vertices: []
       indices: 
       edges: []
@@ -473,20 +548,23 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      He walkin_0: -516048369783106122
-      He walkin_1: -4487628275740896029
-      He walkin_10: 6458152282575946998
-      He walkin_11: 407556009519374269
-      He walkin_12: 325166157578993346
-      He walkin_13: -4635824320675247442
-      He walkin_2: -5971687734691735114
-      He walkin_3: -3816405142905190952
-      He walkin_4: 8183691267489580589
-      He walkin_5: -8600874170551483169
-      He walkin_6: -4962243946623491979
-      He walkin_7: 6622483296963851597
-      He walkin_8: 2532947655258813938
-      He walkin_9: -7453816934209227432
+      Vampire moves_0: 7985425211761020601
+      Vampire moves_1: -6065096928430172653
+      Vampire moves_10: 7585374367815020408
+      Vampire moves_11: -8673518190965123945
+      Vampire moves_12: 357106856677376517
+      Vampire moves_13: 6654891130784773575
+      Vampire moves_14: -1507591485784139741
+      Vampire moves_15: -2840717158415222151
+      Vampire moves_16: -6184784210777481623
+      Vampire moves_2: -5387625337721679734
+      Vampire moves_3: 6517174142292102302
+      Vampire moves_4: -3901955579750926800
+      Vampire moves_5: -1907618870552682933
+      Vampire moves_6: -8055285090832999928
+      Vampire moves_7: 5725756467290872931
+      Vampire moves_8: 3491964880700632367
+      Vampire moves_9: -5782664539527184362
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
