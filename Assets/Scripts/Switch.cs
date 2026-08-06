@@ -6,22 +6,28 @@ using UnityEngine.Serialization;
 public class Switch : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField] protected bool active;
-    [SerializeField] protected int activationState;
-    [SerializeField] protected SwitchType switchType;
-    [SerializeField] protected SpriteRenderer sr;
+    [SerializeField] 
+    protected bool active;
+    [SerializeField] 
+    protected int activationState;
+    [SerializeField] 
+    protected SwitchType switchType;
+    [SerializeField] 
+    protected SpriteRenderer sr;
     
-    [SerializeField] protected List<Switch> targets;
-    [SerializeField] protected int constraint;
+    [SerializeField] 
+    protected List<Switch> targets;
+    [SerializeField] 
+    protected int constraint;
     public float readDelay;
 
     void Start()
     {
-        
+        targets = new List<Switch>();
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
 
         switch (switchType)
@@ -102,7 +108,7 @@ public class Switch : MonoBehaviour
 
     }
 
-    void SetActive(bool b)
+    protected virtual void SetActive(bool b)
     {
         if (b != active)
         {
@@ -116,7 +122,7 @@ public class Switch : MonoBehaviour
         active = b;
     }
 
-    void SetActivation(int n)
+    protected virtual void SetActivation(int n)
     {
         if (n != activationState)
         {
@@ -139,7 +145,7 @@ public class Switch : MonoBehaviour
         return activationState;
     }
 
-    public enum SwitchType
+    protected enum SwitchType
     {
         none, // inputswitch state
         

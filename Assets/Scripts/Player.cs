@@ -10,13 +10,12 @@ public class Player : MonoBehaviour
 {
 
     public static Player p;
+    //some private variables for convenience
     private Transform _t;
     private Rigidbody2D _rb;
     private Collider2D _coll;
     private Keyboard _k;
     private Dictionary<KeyControl, bool> _inputStates;
-    private Animator _anim;
-    private SpriteRenderer _sr;
     
     //this is to keep track of currently active coyoteTimes;
     private Coroutine _coyoteTime;
@@ -89,8 +88,6 @@ public class Player : MonoBehaviour
         _k = Keyboard.current;
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<Collider2D>();
-        _anim = GetComponent<Animator>();
-        _sr = GetComponent<SpriteRenderer>();
         _rb.gravityScale = normalGravity;
         _coyoteTime = null;
         _hasDashed = true;
@@ -132,8 +129,6 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        UpdateAnimation();
-
         if (_dashActive != null || Time.timeScale == 0)
         {
             return;
@@ -224,15 +219,7 @@ public class Player : MonoBehaviour
         }
 
         _rb.gravityScale = (_jumpHold != null) ? holdGravity : normalGravity;
-    }
-
-    void UpdateAnimation()
-    {
-        _sr.flipX = !_recentFaceRight;
-        _anim.SetFloat("speed", Mathf.Abs(_rb.linearVelocityX));
-        _anim.SetFloat("verticalSpeed", _rb.linearVelocityY);
-        _anim.SetBool("grounded", state == PlayerState.grounded);
-        _anim.SetBool("dashing", state == PlayerState.phasing);
+        
     }
 
     void Jump()
@@ -240,7 +227,6 @@ public class Player : MonoBehaviour
         _jumpActive = StartCoroutine(JumpActive());
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x,jumpSpeed);
         _jumpHold = StartCoroutine(HoldJump());
-        _anim.SetTrigger("jump");
     }
 
     IEnumerator JumpActive()
@@ -372,13 +358,15 @@ public class Player : MonoBehaviour
 
     public void Death()
     {
+        
         state = PlayerState.death;
-        _anim.SetTrigger("death");
         _rb.linearVelocity = Vector2.zero;
-        state = PlayerState.airborne;
+        state =  PlayerState.airborne;
+        //invariant: player must spawn in in the air
         Vector3 respawnPos = currentArea.RespawnPos();
         transform.position = respawnPos;
         state = PlayerState.airborne;
+        
     }
 
     public IEnumerator TransitionPause()
