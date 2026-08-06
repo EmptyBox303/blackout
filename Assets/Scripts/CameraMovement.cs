@@ -17,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
         p = Player.p;
-        Screen.SetResolution(640, 360, false);
     }
 
     // Update is called once per frame

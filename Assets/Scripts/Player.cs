@@ -79,6 +79,10 @@ public class Player : MonoBehaviour
 
     [Header("Area")] 
     public Area currentArea;
+
+    [Header("Impact")] 
+    public float impactTime;
+    public float impactSquish;
     
     
     void Awake()
@@ -125,6 +129,17 @@ public class Player : MonoBehaviour
         {
             PhaseDash();
         }
+
+        if (Math.Sign(transform.localScale.x) != Math.Sign(_faceDirection.x) && _faceDirection.x != 0)
+        {
+            print("Hi");
+            Vector3 newScale = transform.localScale;
+            newScale.x *= -1;
+            transform.localScale = newScale;
+        }
+        
+
+       
     }
 
     void FixedUpdate()
@@ -268,6 +283,10 @@ public class Player : MonoBehaviour
             collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
+            if (collision.contacts[0].relativeVelocity.y > 0)
+            {
+                StartCoroutine(Squish(collision.contacts[0].relativeVelocity.y));
+            }
             _groundContact.Add(collision.gameObject);
             _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
@@ -380,6 +399,23 @@ public class Player : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    IEnumerator Squish(float verticalV)
+    {
+        float impactCoeff = impactSquish * verticalV / maxFallingSpeed;
+        for (float t = 0; t < impactTime; t += Time.deltaTime)
+        {
+            float r = 1 - t / impactTime;
+            Vector3 newScale = transform.localScale;
+            newScale.y = 2 - impactCoeff * r;
+            newScale.x = Math.Sign(newScale.x) * (2 + impactCoeff * r);
+
+            transform.localScale = newScale;
+            
+            yield return null;
+        }
+
+        transform.localScale = new Vector3(Math.Sign(transform.localScale.x) * 2, 2, 1);
+    }
 
     public enum PlayerState
     {
