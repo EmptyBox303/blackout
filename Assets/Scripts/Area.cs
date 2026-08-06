@@ -1,18 +1,32 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Area : MonoBehaviour
 {
     [SerializeField]
-    public Dictionary<Switch, AreaTransition> exits;
+    public List<PairedLogic> exits;
+
+    [Header("Boundaries")] 
+    public float width;
+    public float height;
+
+    [Header("Respawn Coords")] 
+    public GameObject respawnMarker;
     
+    [Serializable]
+    public class PairedLogic
+    {
+        public Switch s;
+        public AreaTransition at;
+    }
     void Start()
     {
-        foreach (var (s, at) in exits)
+        foreach (var p in exits)
         {
-            if (!at.gameObject.activeSelf)
+            if (!p.at.gameObject.activeSelf)
             {
-                at.gameObject.SetActive(!s || s.IsActive());
+                p.at.gameObject.SetActive(!p.s || p.s.IsActive());
             }
         }
     }
@@ -20,13 +34,18 @@ public class Area : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (var (s, at) in exits)
+        foreach (var p in exits)
         {
-            if (!at.gameObject.activeSelf)
+            if (!p.at.gameObject.activeSelf)
             {
-                at.gameObject.SetActive(!s || s.IsActive());
+                p.at.gameObject.SetActive(!p.s || p.s.IsActive());
             }
         }
+    }
+
+    public Vector3 RespawnPos()
+    {
+        return respawnMarker.transform.position;
     }
     
     /*

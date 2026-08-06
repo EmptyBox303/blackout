@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     //some private variables for convenience
     private Transform _t;
     private Rigidbody2D _rb;
+    private Collider2D _coll;
     private Keyboard _k;
     private Dictionary<KeyControl, bool> _inputStates;
     
@@ -20,30 +21,42 @@ public class Player : MonoBehaviour
     private Coroutine _coyoteTime;
     private Coroutine _jumpBuffer;
     private Coroutine _jumpHold;
+    private Coroutine _dashActive;
     
     private bool _hasJumped;
+    private bool _hasDashed;
+    public Vector2 _faceDirection;
+    private bool _recentFaceRight;
 
-    [FormerlySerializedAs("_state")] public PlayerState state;
+    [Header("Debug")]
+    public PlayerState state;
     public GameObject contactind;
     //terminal velocity downwards
+    [Header ("Falling")]
     [Tooltip("terminal velocity")]
     public float maxFallingSpeed;
 
+    public float maxLateralSpeed;
+    public float maxUpSpeed;
+
+    [Header("buffers")]
     [Tooltip("buffers")]
     public float coyoteTime;
     public float jumpBuffer;
     public float jumpExtendTime;
     
-    
+    [Header("Speed")]
     [Tooltip("speed")]
     public float walkingSpeed;
     public float jumpSpeed;
     
+    
+    [Header("Gravity")]
     [Tooltip("gravity")]
     public float normalGravity;
     public float holdGravity;
 
-    
+    [Header("Accelerations")]
     [Tooltip("acceleration")]
     public float airborneAccTime;
     public float groundedAccTime;
@@ -51,24 +64,48 @@ public class Player : MonoBehaviour
     //essentially, how long it takes for the player to naturally deccelerate from full speed
     public float airborneDecTime;
     public float groundedDecTime;
+
+    [Tooltip("Dash")] 
+    public float dashSpeed;
+    public float dashDuration;
+    public float dashPause;
+    public ParticleSystem dashParticles;
+
+    [Header("Transition")] 
+    public float transitionTime;
+    
+
+    [Header("Area")] 
+    public Area currentArea;
     
     
-    void Start()
+    void Awake()
     {
         _t = transform;
         p = this;
         _k = Keyboard.current;
         _rb = GetComponent<Rigidbody2D>();
+        _coll = GetComponent<Collider2D>();
         _rb.gravityScale = normalGravity;
         _coyoteTime = null;
         _hasJumped = true;
+        _hasDashed = true;
         _jumpBuffer = null;
         _jumpHold = null;
+        _dashActive = null;
         _inputStates = new Dictionary<KeyControl, bool>();
+        dashParticles.Stop();
+
+        _faceDirection = new Vector2(1, 0);
+        _recentFaceRight = true;
 
         _inputStates[_k.aKey] = false;
         _inputStates[_k.dKey] = false;
+        _inputStates[_k.wKey] = false;
+        _inputStates[_k.sKey] = false;
         _inputStates[_k.spaceKey] = false;
+        
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer("Dash"), true);
     }
 
     // Update is called once per frame
@@ -77,15 +114,49 @@ public class Player : MonoBehaviour
         //restructure so that updates only collect inputs
         _inputStates[_k.aKey] = _k.aKey.isPressed;
         _inputStates[_k.dKey] = _k.dKey.isPressed;
+        _inputStates[_k.wKey] = _k.wKey.isPressed;
+        _inputStates[_k.sKey] = _k.sKey.isPressed;
         _inputStates[_k.spaceKey] = _k.spaceKey.isPressed;
-        
+
+        if (_k.rightShiftKey.wasPressedThisFrame && _dashActive == null)
+        {
+            PhaseDash();
+        }
     }
 
     void FixedUpdate()
     {
+        if (_dashActive != null || Time.timeScale == 0)
+        {
+            return;
+        }
+        
         int lateralMovement = 0;
-        if (_inputStates[_k.aKey]) lateralMovement = -1;
-        if (_inputStates[_k.dKey]) lateralMovement += 1;
+        if (_inputStates[_k.aKey])
+        {
+            lateralMovement = -1;
+            _recentFaceRight = false;
+        }
+
+        if (_inputStates[_k.dKey])
+        {
+            lateralMovement += 1;
+            _recentFaceRight = true;
+        }
+
+        int verticalFacing = 0;
+        if (_inputStates[_k.wKey]) verticalFacing = 1;
+        if (_inputStates[_k.sKey]) verticalFacing -= 1;
+        
+        Vector2 newFaceDirection = new Vector2(lateralMovement,verticalFacing);
+        if (newFaceDirection.magnitude == 0)
+        {
+            _faceDirection = new Vector2((_recentFaceRight) ? 1 : -1, 0);
+        }
+        else
+        {
+            _faceDirection = newFaceDirection.normalized;
+        }
         
         float xSpeed = _rb.linearVelocity.x;
 
@@ -133,6 +204,17 @@ public class Player : MonoBehaviour
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, -maxFallingSpeed);
         }
 
+        if (_rb.linearVelocity.y > maxUpSpeed)
+        {
+            _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, maxUpSpeed);
+        }
+
+        if (Mathf.Abs(_rb.linearVelocityX) > maxLateralSpeed)
+        {
+            _rb.linearVelocity = new Vector2(Math.Sign(_rb.linearVelocityX) * maxLateralSpeed, _rb.linearVelocity.y);
+            
+        }
+
         _rb.gravityScale = (_jumpHold != null) ? holdGravity : normalGravity;
         
     }
@@ -143,9 +225,34 @@ public class Player : MonoBehaviour
         _hasJumped = true;
         _jumpHold = StartCoroutine(HoldJump());
     }
+
+    void PhaseDash()
+    {
+        _dashActive = StartCoroutine(Dash());
+    }
+
+    public bool IsDashing()
+    {
+        return (_dashActive != null);
+    }
+
+    IEnumerator Dash()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Dash");
+        _rb.linearVelocity = dashSpeed * _faceDirection;
+        _rb.gravityScale = 0;
+        dashParticles.Play();
+        state = PlayerState.phasing;
+        yield return new WaitForSeconds(dashDuration);
+        _rb.linearVelocity = Vector2.zero;
+        yield return  new WaitForSeconds(dashPause);
+        gameObject.layer = LayerMask.NameToLayer("Default");
+        _rb.gravityScale = normalGravity;
+        dashParticles.Stop();
+        _dashActive = null;
+    }
     
     void OnCollisionEnter2D(Collision2D collision){
-        print(_rb.linearVelocity);
         
         if (collision.gameObject.CompareTag("Ground") &&
             collision.contacts[0].normal.x == 0)
@@ -175,10 +282,12 @@ public class Player : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        contactind.transform.position = collision.contacts[0].point;
-        if (_rb.linearVelocity.magnitude != 0)
+        if (collision.gameObject.CompareTag("Ground") &&
+             collision.contacts[0].normal.x == 0)
         {
-            
+            state = PlayerState.grounded;
+            _hasJumped = false;
+            CeaseIfActive(ref _coyoteTime);
         }
             
     }
@@ -219,6 +328,25 @@ public class Player : MonoBehaviour
     public void Death()
     {
         
+        state = PlayerState.death;
+        _rb.linearVelocity = Vector2.zero;
+        state =  PlayerState.airborne;
+        //invariant: player must spawn in in the air
+        Vector3 respawnPos = currentArea.RespawnPos();
+        transform.position = respawnPos;
+        state = PlayerState.airborne;
+        
+    }
+
+    public IEnumerator TransitionPause()
+    {
+        Time.timeScale = 0;
+        CeaseIfActive(ref _dashActive);
+        dashParticles.Stop();
+        gameObject.layer = LayerMask.NameToLayer("Default");
+        _hasDashed = false;
+        yield return new WaitForSecondsRealtime(transitionTime);
+        Time.timeScale = 1;
     }
 
 
@@ -226,6 +354,8 @@ public class Player : MonoBehaviour
     {
         grounded,
         airborne,
-        phasing
+        phasing,
+        death,
+        transition
     }
 }
