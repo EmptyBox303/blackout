@@ -6,7 +6,7 @@ public class CameraMovement : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private float _fullZoomWidth = 40;
-    private float _fullZoomHeight = 20.4f;
+    private float _fullZoomHeight = 22.5f;
     private float _regularZoomZ = -19.5f;
 
     private Camera c;
@@ -19,6 +19,7 @@ public class CameraMovement : MonoBehaviour
         p = Player.p;
         c = Camera.main;
         Vector3 proj = c.ViewportToWorldPoint(new Vector3(1, 1, -transform.position.z));
+        print(proj);
         _fullZoomWidth = 2*proj.x;
         _fullZoomHeight = 2*proj.y;
     }
@@ -32,10 +33,28 @@ public class CameraMovement : MonoBehaviour
         float Y = a.height;
         Vector3 preferredCoords = Player.p.transform.position;
         Vector3 areaCoords = a.transform.position;
-        preferredCoords.x = Mathf.Clamp(preferredCoords.x, -X / 2 + _fullZoomWidth / 2 + areaCoords.x,
-            X / 2 - _fullZoomWidth / 2 + areaCoords.x);
-        preferredCoords.y = Mathf.Clamp(preferredCoords.y, -Y / 2 + _fullZoomHeight / 2 + areaCoords.y,
-            Y / 2 - _fullZoomHeight / 2 + areaCoords.y);
+        float xLow = -X / 2 + _fullZoomWidth / 2 + areaCoords.x;
+        float xHigh = X / 2 - _fullZoomWidth / 2 + areaCoords.x;
+        if (xLow > xHigh)
+        {
+            float xMid = (xHigh + xLow) / 2;
+            xLow = xMid;
+            xHigh = xMid;
+        }
+        
+        float yLow = -Y / 2 + _fullZoomHeight / 2 + areaCoords.y;
+        float yHigh = Y / 2 - _fullZoomHeight / 2 + areaCoords.y;
+
+        if (yLow > yHigh)
+        {
+            float yMid = (yHigh + yLow) / 2;
+            yLow = yMid;
+            yHigh = yMid;
+        }
+        preferredCoords.x = Mathf.Clamp(preferredCoords.x, xLow,xHigh);
+        preferredCoords.y = Mathf.Clamp(preferredCoords.y, yLow,yHigh);
+        //print(-Y / 2 + _fullZoomHeight / 2 + areaCoords.y);
+        //print(Y / 2 - _fullZoomHeight / 2 + areaCoords.y);
         preferredCoords.z = _regularZoomZ;
         
         
