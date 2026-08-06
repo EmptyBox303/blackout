@@ -6262,6 +6262,8 @@ MonoBehaviour:
   dashParticles: {fileID: 1254556479}
   transitionTime: 0.3
   currentArea: {fileID: 409885031}
+  impactTime: 0.075
+  impactSquish: 0.3
 --- !u!50 &1295961495
 Rigidbody2D:
   serializedVersion: 5

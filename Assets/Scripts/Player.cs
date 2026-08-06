@@ -80,6 +80,10 @@ public class Player : MonoBehaviour
 
     [Header("Area")] 
     public Area currentArea;
+
+    [Header("Impact")] 
+    public float impactTime;
+    public float impactSquish;
     
     
     void Awake()
@@ -100,6 +104,7 @@ public class Player : MonoBehaviour
         _jumpActive = null;
         _inputStates = new Dictionary<KeyControl, bool>();
         dashParticles.Stop();
+        _sr = GetComponent<SpriteRenderer>();
 
         _faceDirection = new Vector2(1, 0);
         _recentFaceRight = true;
@@ -128,6 +133,17 @@ public class Player : MonoBehaviour
         {
             PhaseDash();
         }
+
+        if (Math.Sign(transform.localScale.x) != Math.Sign(_faceDirection.x) && _faceDirection.x != 0)
+        {
+            print("Hi");
+            Vector3 newScale = transform.localScale;
+            newScale.x *= -1;
+            transform.localScale = newScale;
+        }
+        
+
+       
     }
 
     void FixedUpdate()
@@ -188,7 +204,11 @@ public class Player : MonoBehaviour
         }
         
         _rb.linearVelocity = new Vector2(xSpeed,_rb.linearVelocityY);
-        
+
+        if (_groundContact.Count > 0)
+        {
+            state = PlayerState.grounded;
+        }
 
         if (_inputStates[_k.spaceKey])
         {
@@ -266,6 +286,8 @@ public class Player : MonoBehaviour
         _rb.linearVelocity = dashSpeed * _faceDirection;
         _rb.gravityScale = 0;
         dashParticles.Play();
+        _sr.color = Color.black;
+        
         state = PlayerState.phasing;
         yield return new WaitForSeconds(dashDuration);
         _rb.linearVelocity = Vector2.zero;
@@ -273,7 +295,9 @@ public class Player : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Default");
         _rb.gravityScale = normalGravity;
         dashParticles.Stop();
+        _sr.color = Color.white;
         state = PlayerState.airborne;
+        
         _dashActive = null;
     }
     
@@ -283,6 +307,10 @@ public class Player : MonoBehaviour
             collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
+            if (collision.contacts[0].relativeVelocity.y > 0)
+            {
+                StartCoroutine(Squish(collision.contacts[0].relativeVelocity.y));
+            }
             _groundContact.Add(collision.gameObject);
             _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
@@ -389,12 +417,30 @@ public class Player : MonoBehaviour
         Time.timeScale = 0;
         CeaseIfActive(ref _dashActive);
         dashParticles.Stop();
+        _sr.color = Color.white;
         gameObject.layer = LayerMask.NameToLayer("Default");
         _hasDashed = false;
         yield return new WaitForSecondsRealtime(transitionTime);
         Time.timeScale = 1;
     }
 
+    IEnumerator Squish(float verticalV)
+    {
+        float impactCoeff = impactSquish * verticalV / maxFallingSpeed;
+        for (float t = 0; t < impactTime; t += Time.deltaTime)
+        {
+            float r = 1 - t / impactTime;
+            Vector3 newScale = transform.localScale;
+            newScale.y = 2 - impactCoeff * r;
+            newScale.x = Math.Sign(newScale.x) * (2 + impactCoeff * r);
+
+            transform.localScale = newScale;
+            
+            yield return null;
+        }
+
+        transform.localScale = new Vector3(Math.Sign(transform.localScale.x) * 2, 2, 1);
+    }
 
     public enum PlayerState
     {
