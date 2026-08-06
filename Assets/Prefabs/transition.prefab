@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8904265370374392775}
   - component: {fileID: 8857467616255834128}
   - component: {fileID: 6196595290548103070}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: transition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 9160005078278416945}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.5, y: 5, z: 0}
+  m_LocalPosition: {x: 20, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,6 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78f62720377740744819257db30d8f4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaTransition
+  nextArea: {fileID: 5833102213900344473, guid: 355d3b1abb8d36544bab293df37bd86d, type: 3}
+  verticalEntry: 0
+  lesserArea: {fileID: 0}
+  greaterArea: {fileID: 0}
 --- !u!61 &6196595290548103070
 BoxCollider2D:
   m_ObjectHideFlags: 0
