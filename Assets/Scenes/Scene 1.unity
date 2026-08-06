@@ -6340,7 +6340,7 @@ MonoBehaviour:
   maxFallingSpeed: 25
   maxLateralSpeed: 25
   maxUpSpeed: 20
-  coyoteTime: 0.02
+  coyoteTime: 0
   jumpBuffer: 0.1
   jumpExtendTime: 0.2
   walkingSpeed: 12.5
