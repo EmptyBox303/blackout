@@ -221,6 +221,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
+        print("Jumped");
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x,jumpSpeed);
         _hasJumped = true;
         _jumpHold = StartCoroutine(HoldJump());
@@ -284,7 +285,7 @@ public class Player : MonoBehaviour
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground") &&
-             collision.contacts[0].normal.x == 0)
+             collision.contacts[0].normal.x == 0 && transform.position.y >= collision.gameObject.transform.position.y)
         {
             state = PlayerState.grounded;
             _hasJumped = false;
