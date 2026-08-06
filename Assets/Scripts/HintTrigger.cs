@@ -8,7 +8,6 @@ public class HintTrigger : MonoBehaviour
     public HintText hintText;
     public Collider2D trigger;
 
-    public float disappearDelay;
     public string hint;
     void Start()
     {
@@ -25,15 +24,12 @@ public class HintTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             hintText.ProduceHintText(hint);
+            trigger.enabled = false;
         }
+        
     }
     
-
-    IEnumerator TextDissipate()
-    {
-        yield return new WaitForSeconds(disappearDelay);
-        hintText.ClearText();
-    }
+    
     
     
     
