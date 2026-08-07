@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     private Collider2D _coll;
     private Keyboard _k;
     private Dictionary<KeyControl, bool> _inputStates;
-    private Animator _anim;
     private SpriteRenderer _sr;
     
     //this is to keep track of currently active coyoteTimes;
@@ -85,6 +84,9 @@ public class Player : MonoBehaviour
     public float impactTime;
     public float impactSquish;
     
+    public Animator anim;
+    
+    
     
     void Awake()
     {
@@ -93,7 +95,6 @@ public class Player : MonoBehaviour
         _k = Keyboard.current;
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<Collider2D>();
-        _anim = GetComponent<Animator>();
         _sr = GetComponent<SpriteRenderer>();
         _rb.gravityScale = normalGravity;
         _coyoteTime = null;
@@ -250,10 +251,10 @@ public class Player : MonoBehaviour
     void UpdateAnimation()
     {
         _sr.flipX = !_recentFaceRight;
-        _anim.SetFloat("speed", Mathf.Abs(_rb.linearVelocityX));
-        _anim.SetFloat("verticalSpeed", _rb.linearVelocityY);
-        _anim.SetBool("grounded", state == PlayerState.grounded);
-        _anim.SetBool("dashing", state == PlayerState.phasing);
+        anim.SetFloat("speed", Mathf.Abs(_rb.linearVelocityX));
+        anim.SetFloat("verticalSpeed", _rb.linearVelocityY);
+        anim.SetBool("grounded", state == PlayerState.grounded);
+        anim.SetBool("dashing", state == PlayerState.phasing);
     }
 
     void Jump()
@@ -261,7 +262,7 @@ public class Player : MonoBehaviour
         _jumpActive = StartCoroutine(JumpActive());
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x,jumpSpeed);
         _jumpHold = StartCoroutine(HoldJump());
-        _anim.SetTrigger("jump");
+        anim.SetTrigger("jump");
     }
 
     IEnumerator JumpActive()
@@ -404,7 +405,7 @@ public class Player : MonoBehaviour
     {
         state = PlayerState.death;
         if (playAnimation)
-            _anim.SetTrigger("death");
+            anim.SetTrigger("death");
         _rb.linearVelocity = Vector2.zero;
         state = PlayerState.airborne;
         //invariant: player must spawn in in the air
