@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
 
         if (_k.eKey.wasPressedThisFrame && _dashActive == null && state == PlayerState.grounded && nearInteractable != null)
         {
-            //TODO: add trigger for interact animation;
+            anim.SetTrigger("interact");
             nearInteractable.Interact();
         }
 
