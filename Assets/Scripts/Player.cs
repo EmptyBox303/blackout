@@ -329,6 +329,7 @@ public class Player : MonoBehaviour
 
     IEnumerator Dash()
     {
+        transform.position = new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z);
         _groundContact.Clear();
         _hasDashed = true;
         gameObject.layer = LayerMask.NameToLayer("Dash");

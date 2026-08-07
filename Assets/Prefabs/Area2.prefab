@@ -58,6 +58,7 @@ MonoBehaviour:
     at: {fileID: 4214022750758779854}
   width: 40
   height: 20.4
+  cameraFocal: {x: 0, y: 0, z: 0}
   respawnMarker: {fileID: 4927054044478695289}
 --- !u!1001 &591031019011260516
 PrefabInstance:
@@ -544,7 +545,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1277418867327944738, guid: f066766ebdec9654cbbf22265f40628b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -20.2
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 1277418867327944738, guid: f066766ebdec9654cbbf22265f40628b, type: 3}
       propertyPath: m_LocalPosition.z

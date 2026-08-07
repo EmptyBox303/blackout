@@ -259,6 +259,7 @@ MonoBehaviour:
     at: {fileID: 2066638063462211842}
   width: 40
   height: 20.4
+  cameraFocal: {x: 0, y: 0, z: 0}
   respawnMarker: {fileID: 4927054044478695289}
 --- !u!1 &6489852107371705981
 GameObject:
@@ -453,7 +454,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2928920668669125313, guid: b4b38c28c66d0914ebe3f1dd6a0ff42b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 2928920668669125313, guid: b4b38c28c66d0914ebe3f1dd6a0ff42b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -490,6 +491,10 @@ PrefabInstance:
     - target: {fileID: 2928920668669125313, guid: b4b38c28c66d0914ebe3f1dd6a0ff42b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3068414264717593021, guid: b4b38c28c66d0914ebe3f1dd6a0ff42b, type: 3}
+      propertyPath: m_text
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1049,7 +1054,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1277418867327944738, guid: f066766ebdec9654cbbf22265f40628b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -20.2
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 1277418867327944738, guid: f066766ebdec9654cbbf22265f40628b, type: 3}
       propertyPath: m_LocalPosition.z
