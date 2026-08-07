@@ -15,7 +15,11 @@ public class Player : MonoBehaviour
     private Collider2D _coll;
     private Keyboard _k;
     private Dictionary<KeyControl, bool> _inputStates;
-    private SpriteRenderer _sr;
+    public SpriteRenderer sr;
+
+    private AudioSource _as;
+
+    public static readonly Vector2 Dimensions = new Vector2(1.75f, 2);
     
     //this is to keep track of currently active coyoteTimes;
     private Coroutine _coyoteTime;
@@ -23,12 +27,16 @@ public class Player : MonoBehaviour
     private Coroutine _jumpHold;
     private Coroutine _jumpActive;
     private Coroutine _dashActive;
+    private Coroutine _deathActive;
 
     public List<GameObject> _groundContact;
     
     private bool _hasDashed;
     public Vector2 _faceDirection;
     private bool _recentFaceRight;
+
+    [SerializeField] 
+    private int consecutiveAirborneZero;
 
     [Header("Debug")]
     public PlayerState state;
@@ -73,12 +81,20 @@ public class Player : MonoBehaviour
     public float dashPause;
     public ParticleSystem dashParticles;
 
+    [Header("Death")] 
+    public float deathDuration;
+    public ParticleSystem deathParticles;
+    public float deathPause;
+    public ParticleSystem respawnParticles;
+    public float deathReformDuration;
+
     [Header("Transition")] 
     public float transitionTime;
     
 
     [Header("Area")] 
     public Area currentArea;
+    public InputSwitch nearInteractable;
 
     [Header("Impact")] 
     public float impactTime;
@@ -95,7 +111,6 @@ public class Player : MonoBehaviour
         _k = Keyboard.current;
         _rb = GetComponent<Rigidbody2D>();
         _coll = GetComponent<Collider2D>();
-        _sr = GetComponent<SpriteRenderer>();
         _rb.gravityScale = normalGravity;
         _coyoteTime = null;
         _hasDashed = true;
@@ -103,9 +118,14 @@ public class Player : MonoBehaviour
         _jumpHold = null;
         _dashActive = null;
         _jumpActive = null;
+        _deathActive = null;
         _inputStates = new Dictionary<KeyControl, bool>();
         dashParticles.Stop();
-        _sr = GetComponent<SpriteRenderer>();
+        deathParticles.Stop();
+        respawnParticles.Stop();
+        _as = GetComponent<AudioSource>();
+
+        consecutiveAirborneZero = 0;
 
         _faceDirection = new Vector2(1, 0);
         _recentFaceRight = true;
@@ -116,6 +136,9 @@ public class Player : MonoBehaviour
         _inputStates[_k.sKey] = false;
         _inputStates[_k.spaceKey] = false;
         _groundContact = new List<GameObject>();
+        nearInteractable = null;
+
+        transform.position = currentArea.respawnMarker.transform.position;
         
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Default"), LayerMask.NameToLayer("Dash"), true);
     }
@@ -123,6 +146,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (IsDashing() || IsDying()) return;
         //restructure so that updates only collect inputs
         _inputStates[_k.aKey] = _k.aKey.isPressed;
         _inputStates[_k.dKey] = _k.dKey.isPressed;
@@ -142,8 +166,30 @@ public class Player : MonoBehaviour
             newScale.x *= -1;
             transform.localScale = newScale;
         }
-        
 
+        if (_k.eKey.wasPressedThisFrame && _dashActive == null && state == PlayerState.grounded && nearInteractable != null)
+        {
+            //TODO: add trigger for interact animation;
+            nearInteractable.Interact();
+        }
+
+        if (_rb.linearVelocityY == 0 && state == PlayerState.airborne && Time.timeScale > 0)
+        {
+            consecutiveAirborneZero++;
+        }
+        else
+        {
+            consecutiveAirborneZero = 0;
+        }
+
+        if (consecutiveAirborneZero > 10)
+        {
+            consecutiveAirborneZero = 0;
+            print("anomalous airbone state detected; setting to grounded");
+            state = PlayerState.grounded;
+            _hasDashed = false;
+            
+        }
        
     }
 
@@ -151,7 +197,7 @@ public class Player : MonoBehaviour
     {
         UpdateAnimation();
 
-        if (_dashActive != null || Time.timeScale == 0)
+        if (_dashActive != null || IsDying() || Time.timeScale == 0)
         {
             return;
         }
@@ -250,7 +296,7 @@ public class Player : MonoBehaviour
 
     void UpdateAnimation()
     {
-        _sr.flipX = !_recentFaceRight;
+        //sr.flipX = !_recentFaceRight;
         anim.SetFloat("speed", Mathf.Abs(_rb.linearVelocityX));
         anim.SetFloat("verticalSpeed", _rb.linearVelocityY);
         anim.SetBool("grounded", state == PlayerState.grounded);
@@ -283,12 +329,13 @@ public class Player : MonoBehaviour
 
     IEnumerator Dash()
     {
+        _groundContact.Clear();
         _hasDashed = true;
         gameObject.layer = LayerMask.NameToLayer("Dash");
         _rb.linearVelocity = dashSpeed * _faceDirection;
         _rb.gravityScale = 0;
         dashParticles.Play();
-        _sr.color = Color.black;
+        sr.color = Color.black;
         
         state = PlayerState.phasing;
         yield return new WaitForSeconds(dashDuration);
@@ -297,7 +344,7 @@ public class Player : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Default");
         _rb.gravityScale = normalGravity;
         dashParticles.Stop();
-        _sr.color = Color.white;
+        sr.color = Color.white;
         state = PlayerState.airborne;
         
         _dashActive = null;
@@ -313,7 +360,11 @@ public class Player : MonoBehaviour
             {
                 StartCoroutine(Squish(collision.contacts[0].relativeVelocity.y));
             }
-            _groundContact.Add(collision.gameObject);
+
+            if (!_groundContact.Contains(collision.gameObject))
+            {
+                _groundContact.Add(collision.gameObject);
+            }
             _hasDashed = false;
             CeaseIfActive(ref _coyoteTime);
             
@@ -403,15 +454,52 @@ public class Player : MonoBehaviour
 
     public void Death(bool playAnimation = false)
     {
-        state = PlayerState.death;
-        if (playAnimation)
-            anim.SetTrigger("death");
-        _rb.linearVelocity = Vector2.zero;
-        state = PlayerState.airborne;
+        
+        _deathActive = StartCoroutine(Die(playAnimation));
         //invariant: player must spawn in in the air
+        
+    }
+
+    public bool IsDying()
+    {
+        return (_deathActive != null);
+    }
+
+    IEnumerator Die(bool playAnimation)
+    {
+        print("dead");
+        _as.Play();
+        state = PlayerState.death;
+        _rb.linearVelocity = Vector2.zero;
+        _rb.gravityScale = 0;
+        _coll.enabled = false;
+        _groundContact.Clear();
+        if (playAnimation)
+        {
+            anim.SetTrigger("death");
+            yield return new WaitForSeconds(deathDuration);
+        }
+        
+        
+        
+        
         Vector3 respawnPos = currentArea.RespawnPos();
+        deathParticles.Play();
+        sr.gameObject.SetActive(false);
+        
+        yield return new WaitForSecondsRealtime(deathPause);
+        
         transform.position = respawnPos;
+        _coll.enabled = true;
         state = PlayerState.airborne;
+        respawnParticles.Play();
+        sr.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(deathReformDuration);
+        
+        
+        _rb.gravityScale = normalGravity;
+        _deathActive = null;
     }
 
     public IEnumerator TransitionPause()
@@ -419,9 +507,8 @@ public class Player : MonoBehaviour
         Time.timeScale = 0;
         CeaseIfActive(ref _dashActive);
         dashParticles.Stop();
-        _sr.color = Color.white;
+        sr.color = Color.white;
         gameObject.layer = LayerMask.NameToLayer("Default");
-        _hasDashed = false;
         yield return new WaitForSecondsRealtime(transitionTime);
         Time.timeScale = 1;
     }

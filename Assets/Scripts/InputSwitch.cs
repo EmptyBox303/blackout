@@ -8,6 +8,11 @@ public class InputSwitch : Switch
         switchType = SwitchType.none;
     }
 
+    public virtual void Interact()
+    {
+        
+    }
+
     // Update is called once per frame
     protected override void Update()
     {
@@ -16,17 +21,22 @@ public class InputSwitch : Switch
     
     public void Activate()
     {
-        
+        active = true;
+        activationState = 1;
     }
 
     public void Deactivate()
     {
+        active = false;
+        activationState = 0;
+        
         
     }
 
     public void Toggle()
     {
-        
+        active = !active;
+        activationState = (active) ? 1 : 0;
     }
 
     public void Increment()

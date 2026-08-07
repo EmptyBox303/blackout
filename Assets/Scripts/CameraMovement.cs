@@ -5,8 +5,8 @@ using UnityEngine.InputSystem.Controls;
 public class CameraMovement : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private float _fullZoomWidth = 40;
-    private float _fullZoomHeight = 22.5f;
+    private const float FullZoomWidth = 40;
+    private const float FullZoomHeight = 22.5f;
     private float _regularZoomZ = -19.5f;
 
     private Camera c;
@@ -19,9 +19,8 @@ public class CameraMovement : MonoBehaviour
         p = Player.p;
         c = Camera.main;
         Vector3 proj = c.ViewportToWorldPoint(new Vector3(1, 1, -transform.position.z));
-        print(proj);
-        _fullZoomWidth = 2*proj.x;
-        _fullZoomHeight = 2*proj.y;
+        _regularZoomZ *= (proj.x / FullZoomWidth + proj.y / FullZoomHeight);
+        print(_regularZoomZ);
     }
 
     // Update is called once per frame
@@ -32,9 +31,9 @@ public class CameraMovement : MonoBehaviour
         float X = a.width;
         float Y = a.height;
         Vector3 preferredCoords = Player.p.transform.position;
-        Vector3 areaCoords = a.transform.position;
-        float xLow = -X / 2 + _fullZoomWidth / 2 + areaCoords.x;
-        float xHigh = X / 2 - _fullZoomWidth / 2 + areaCoords.x;
+        Vector3 areaCoords = a.transform.position + a.cameraFocal;
+        float xLow = -X / 2 + FullZoomWidth / 2 + areaCoords.x;
+        float xHigh = X / 2 - FullZoomWidth / 2 + areaCoords.x;
         if (xLow > xHigh)
         {
             float xMid = (xHigh + xLow) / 2;
@@ -42,8 +41,8 @@ public class CameraMovement : MonoBehaviour
             xHigh = xMid;
         }
         
-        float yLow = -Y / 2 + _fullZoomHeight / 2 + areaCoords.y;
-        float yHigh = Y / 2 - _fullZoomHeight / 2 + areaCoords.y;
+        float yLow = -Y / 2 + FullZoomHeight / 2 + areaCoords.y;
+        float yHigh = Y / 2 - FullZoomHeight / 2 + areaCoords.y;
 
         if (yLow > yHigh)
         {

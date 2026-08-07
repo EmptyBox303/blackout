@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DeathTrigger
   coll: {fileID: 8280560501423047744}
   belongingArea: {fileID: 0}
+  playDeathAnimation: 0
 --- !u!61 &8280560501423047744
 BoxCollider2D:
   m_ObjectHideFlags: 0

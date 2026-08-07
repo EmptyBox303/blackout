@@ -11,6 +11,8 @@ public class Area : MonoBehaviour
     public float width;
     public float height;
 
+    public Vector3 cameraFocal;
+
     [Header("Respawn Coords")] 
     public GameObject respawnMarker;
     

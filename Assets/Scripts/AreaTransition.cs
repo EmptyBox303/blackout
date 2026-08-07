@@ -56,19 +56,10 @@ public class AreaTransition : MonoBehaviour
             if (newAxisCross != _axisCross)
             {
                 _axisCross = newAxisCross;
-                if (!verticalEntry)
-                {
-                    Player.p.currentArea = 
-                        (transform.position.x > Player.p.transform.position.x) ? 
-                            lesserArea : greaterArea;
-                }
-                else
-                {
-                    Player.p.currentArea = 
-                        (transform.position.y > Player.p.transform.position.y) ? 
-                            lesserArea : greaterArea;
-                    //some function that enforces transition
-                }
+                
+                Player.p.currentArea = 
+                    (_axisCross) ? 
+                        greaterArea : lesserArea;
 
                 StartCoroutine(Player.p.TransitionPause());
             }
