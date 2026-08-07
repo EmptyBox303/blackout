@@ -176,6 +176,7 @@ public class Player : MonoBehaviour
         if (newFaceDirection.magnitude == 0)
         {
             _faceDirection = new Vector2((_recentFaceRight) ? 1 : -1, 0);
+            
         }
         else
         {
